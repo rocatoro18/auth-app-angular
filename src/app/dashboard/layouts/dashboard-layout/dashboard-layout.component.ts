@@ -20,4 +20,8 @@ export class DashboardLayoutComponent {
   }
   */
 
+  onLogout() {
+    this.authService.logout();
+  }
+
 }

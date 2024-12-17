@@ -19,7 +19,10 @@ export class AuthService {
   public currentUser = computed(() => this._currentUser());
   public authStatus = computed(() => this._authStatus());
 
-  constructor() { }
+  constructor() {
+    // NOS SUSCRIBIMOS PARA CHECAR EL STATUS
+    this.checkAuthStatus().subscribe();
+  }
 
   private setAuthentication(user: User, token: string): boolean {
     this._currentUser.set(user);
@@ -52,7 +55,10 @@ export class AuthService {
     const url = `${this.baseUrl}/auth/check-token`;
     const token = localStorage.getItem('token');
 
-    if(!token) return of(false);
+    if(!token) {
+      this.logout();
+      return of(false);
+    }
 
     // CON ESTO SE CREAN LOS HEADERS
     const headers = new HttpHeaders()
@@ -68,6 +74,12 @@ export class AuthService {
 
         })
       )
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    this._currentUser.set(null);
+    this._authStatus.set(AuthStatus.notAuthenticated);
   }
 
 }
